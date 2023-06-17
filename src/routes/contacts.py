@@ -10,12 +10,12 @@ from src.repository import contacts as repo_contacts
 
 router = APIRouter(prefix='/contacts', tags=['contacts'])
 
-@router.get('/', responce_model=List[ContactResponce])
+@router.get('/', response_model=List[ContactResponce])
 async def read_contacts(skip: int, limit: int, db: Session = Depends(get_db)):
     result = await repo_contacts.get_contacts(skip, limit, db)
     return result
 
-@router.get('/{contact_id}', responce_model=ContactResponce)
+@router.get('/{contact_id}', response_model=ContactResponce)
 async def read_contact(contact_id: int, db: Session = Depends(get_db)):
     result = await repo_contacts.get_contact(contact_id, db)
     if not result:
