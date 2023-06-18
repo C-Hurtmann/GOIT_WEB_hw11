@@ -1,7 +1,7 @@
 from typing import List
 
 from datetime import datetime, timedelta
-from sqlalchemy import and_, extract
+from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
 from src.database.models import Contact
