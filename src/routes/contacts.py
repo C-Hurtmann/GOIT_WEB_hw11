@@ -25,3 +25,17 @@ async def read_contact(contact_id: int, db: Session = Depends(get_db)):
 @router.post('/', response_model=ContactResponce)
 async def create_contact(body: ContactModel, db: Session = Depends(get_db)):
     return await repo_contacts.create_contact(body, db)
+
+@router.put('/{contact_id}')
+async def update_contact(contact_id: int, body: ContactModel, db: Session = Depends(get_db)):
+    result = await repo_contacts.update_contact(contact_id, body, db)
+    if not result:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Contact not found')
+    return result
+
+@router.delete('/{contact_id}')
+async def delete_contact(contact_id: int, db: Session = Depends(get_db)):
+    result = await repo_contacts.delete_contact(contact_id, db)
+    if not result:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Contact not found')
+    return result
