@@ -24,7 +24,7 @@ async def get_contacts(skip: int,
     contacts = db.query(Contact).filter(and_(*filters)).offset(skip).limit(limit).all()
     return contacts
 
-async def get_contacts_with_bithday_on_next_week(db: Session):
+async def get_contacts_with_bithday_on_next_week(db: Session) -> List[Contact]:
     today = datetime.today().date()
     day_after_one_week = today + timedelta(days=7)
     contacts = db.query(Contact).all()
