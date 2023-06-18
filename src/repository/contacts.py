@@ -30,6 +30,7 @@ async def update_contact(contact_id: int, body: ContactModel, db: Session) -> Co
         contact.phone = body.phone
         contact.birthday = body.birthday
         db.commit()
+        db.refresh(contact)
     return contact
 
 async def delete_contact(contact_id: int, db: Session) -> Contact | None:
