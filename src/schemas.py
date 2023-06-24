@@ -1,5 +1,4 @@
 from datetime import date
-from typing import Optional
 from pydantic import BaseModel, Field, EmailStr, constr, validator
 
 
@@ -26,3 +25,28 @@ class ContactResponce(ContactModel):
     
     class Config:
         orm_mode = True
+
+
+class UserModel(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserDB(BaseModel):
+    id: id
+    email: EmailStr
+    password: str
+    
+    class Config:
+        orm_mode = True
+
+
+class UserResponse(BaseModel):
+    user: UserDB
+    detail: str = 'User created'
+
+
+class TokenModel(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = 'bearer'
