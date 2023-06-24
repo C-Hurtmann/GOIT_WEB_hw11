@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 
@@ -9,6 +10,16 @@ class Contact(Base):
     id = Column(Integer, primary_key=True)
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
-    email = Column(String(50))
+    email = Column(String(100))
     phone = Column(String(20))
     birthday = Column(Date)
+    user_id = Column(ForeignKey('users.id', ondelete='CASCADE'), default=None)
+    user = relationship('User', backref='contacts')
+
+
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    email = Column(String(100), nullable=False, unique=True)
+    password = Column(String(250), nullable=False)
+    refresh_token = Column(String(255), nullable=True)
