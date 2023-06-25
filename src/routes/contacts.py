@@ -41,7 +41,7 @@ async def get_contact(contact_id: int,
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Contact not found')
     return result
 
-@router.post('/', response_model=ContactResponce)
+@router.post('/', response_model=ContactResponce, status_code=status.HTTP_201_CREATED)
 async def create_contact(body: ContactModel,
                          current_user: User = Depends(auth_service.get_current_user),
                          db: Session = Depends(get_db)):

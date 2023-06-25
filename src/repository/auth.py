@@ -1,11 +1,10 @@
 from sqlalchemy.orm import Session
-from pydantic import EmailStr
 
 from src.database.models import User
 from src.schemas import UserModel
 
 
-async def get_user_by_email(email: EmailStr, db: Session) -> User:
+async def get_user_by_email(email: str, db: Session) -> User:
     return db.query(User).filter(User.email == email).first()
 
 async def create_user(body: UserModel, db: Session) -> User:

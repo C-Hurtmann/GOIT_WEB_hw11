@@ -29,11 +29,11 @@ class ContactResponce(ContactModel):
 
 class UserModel(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(min_length=2, max_length=20)
 
 
 class UserDB(BaseModel):
-    id: id
+    id: int
     email: EmailStr
     password: str
     
@@ -43,7 +43,8 @@ class UserDB(BaseModel):
 
 class UserResponse(BaseModel):
     user: UserDB
-    detail: str = 'User created'
+    detail: str = 'User successfully created'
+    
 
 
 class TokenModel(BaseModel):
