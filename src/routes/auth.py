@@ -22,7 +22,7 @@ async def signup(body: UserModel, db: Session = Depends(get_db)):
 
 @router.post('/login', response_model=TokenModel)
 async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = await repo_auth.get_user_by_email(body.email, db)
+    user = await repo_auth.get_user_by_email(body.username, db)
     if not user: # if user attempt to login with email hadn't signed up
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid email') 
     if not auth_service.verify_password(body.password, user.password): # if user put wrong password

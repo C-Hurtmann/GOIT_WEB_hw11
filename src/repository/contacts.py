@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from src.database.models import Contact, User
 from src.schemas import ContactModel
 
+
 # GET
 async def get_contacts(skip: int,
                        limit: int,
@@ -47,9 +48,12 @@ async def get_contact(contact_id: int, user: User, db: Session) -> Contact:
     return contact
 # POST
 async def create_contact(body: ContactModel, user: User, db: Session) -> Contact:
-    contact_data = body.dict()
-    contact_data.update({'user': user})
-    contact = Contact(**contact_data)
+    contact = Contact(first_name=body.first_name,
+                      last_name=body.last_name,
+                      email=body.email,
+                      phone=body.phone,
+                      birthday=body.birthday,
+                      user=user)
     db.add(contact)
     db.commit()
     db.refresh(contact)
