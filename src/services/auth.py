@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db
-from src.repository import users as repo_users
+from repository import auth as repo_users
 
 
 class Auth:
