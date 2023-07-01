@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 import uvicorn
-from uvicorn.logging import DefaultFormatter
+
 from src.routes import contacts
 from src.routes import auth
 
