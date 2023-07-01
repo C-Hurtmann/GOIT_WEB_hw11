@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db
@@ -12,7 +13,8 @@ from src.services.auth import auth_service
 
 router = APIRouter(prefix='/contacts', tags=['contacts'])
 
-@router.get('/', response_model=List[ContactResponce])
+@router.get('/', response_model=List[ContactResponce],
+            dependencies=[Depends(RateLimiter(times=1, seconds=5))])
 async def get_contacts(skip: int,
                         limit: int,
                         current_user: User = Depends(auth_service.get_current_user),
