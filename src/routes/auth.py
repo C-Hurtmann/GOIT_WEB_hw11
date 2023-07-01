@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredent
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db
-from src.schemas import UserModel, UserResponse, TokenModel
+from src.schemas import UserModel, UserResponse, TokenModel, RequestEmail
 from src.repository import auth as repo_auth
 from src.services.auth import auth_service
 from src.services.email import send_email
@@ -14,13 +14,15 @@ security = HTTPBearer()
 
 
 @router.post('/signup', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def signup(body: UserModel, background_tasks: BackgroundTasks, request: Request, db: Session = Depends(get_db)):
+async def signup(body: UserModel,
+                 background_tasks: BackgroundTasks,
+                 request: Request, db: Session = Depends(get_db)):
     exist_user = await repo_auth.get_user_by_email(body.email, db)
     if exist_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Account with this email already exist')
     body.password = auth_service.get_password_hash(body.password)
     new_user = await repo_auth.create_user(body, db)
-    background_tasks.add_task(send_email, new_user.email, request.base_url)
+    background_tasks.add_task(send_email, new_user.email, request.base_url) # starts verification way
     return {"user": new_user, "detail": "User successfully created. Check your email for confirmation"}
 
 
@@ -39,7 +41,7 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
     return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer'}
 
 
-@router.get('/refresh_token', response_model=TokenModel)
+@router.get('/refresh_token', response_model=TokenModel) # TODO find out when this route use
 async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(security), db: Session = Depends(get_db)):
     token = credentials.credentials
     email = await auth_service.decode_refresh_token(token)
@@ -53,8 +55,8 @@ async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(sec
     return {'access_token': access_token, 'Refresh_token': refresh_token, 'token_type': 'bearer'}
 
 
-@router.get('/confirmed_email/{token}')
-async def connfirm_email(token: str, db: Session = Depends(get_db)): # 
+@router.get('/confirmed_email/{token}') #  link for confirmation email
+async def connfirm_email(token: str, db: Session = Depends(get_db)):
     email = await auth_service.get_email_from_token(token)
     user = await repo_auth.get_user_by_email(email, db)
     if not user:
@@ -63,3 +65,16 @@ async def connfirm_email(token: str, db: Session = Depends(get_db)): #
         return {'message': 'Your email has already been confirmed'}
     await repo_auth.confirm_email(email, db)
     return {'message': 'Email confirmed'}
+
+
+@router.post('/request_email')
+async def request_email(body: RequestEmail,
+                        background_tasks: BackgroundTasks,
+                        request: Request, db: Session = Depends(get_db)): 
+    user = await repo_auth.get_user_by_email(body.email, db)
+    
+    if user.confirmed:
+        return {'message': 'Email has already been confirmed'}
+    if user:
+        background_tasks.add_task(send_email, user.email, request.base_url)
+    return {'message': 'Check your email for confirmation'}
