@@ -22,7 +22,7 @@ async def update_user_avatar(file: UploadFile = File(),
                              db: Session = Depends(get_db)):
     cloudinary.config(
         cloud_name=settings.cloud_name,
-        api_key=settings.cloud_api_secret,
+        api_key=settings.cloud_api_key,
         api_secret=settings.cloud_api_secret,
         secure=True
     )
