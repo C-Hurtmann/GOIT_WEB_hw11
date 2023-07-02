@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     mail_server: str
     redis_host: str = 'localhost'
     redis_port: int = 6379
+    cloud_name: str
+    clound_api_key: str
+    cloud_api_secret: str
     
     class Config:
         env_file = '.env'
