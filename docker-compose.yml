@@ -1,0 +1,17 @@
+version: '3'
+services:
+  database:
+    image: 'postgres:latest'
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: homework11
+      POSTGRES_USER: czagorodnyi
+      POSTGRES_PASSWORD: B34f56j47h55
+  redis:
+    image: 'redis:alpine'
+    restart: always
+    ports:
+      - 6379:6379
+
