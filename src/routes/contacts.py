@@ -13,8 +13,7 @@ from src.services.auth import auth_service
 
 router = APIRouter(prefix='/contacts', tags=['contacts'])
 
-@router.get('/', response_model=List[ContactResponce],
-            dependencies=[Depends(RateLimiter(times=1, seconds=5))])
+@router.get('/', response_model=List[ContactResponce])
 async def get_contacts(skip: int,
                         limit: int,
                         current_user: User = Depends(auth_service.get_current_user),
