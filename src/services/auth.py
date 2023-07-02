@@ -89,15 +89,15 @@ class Auth:
         except JWTError:
             raise credentials_exception
         
-        user = redis_session.get(email) # get user from cache
-        if user:
-            print(user)
-            return pickle.loads(user)
-        user = await repo_users.get_user_by_email(email, db)
+        user = await redis_session.get(email) # get user from cache
         if not user:
-            raise credentials_exception
-        redis_session.set(email, pickle.dump(user)) # set user to cache on 9000 seconds
-        redis_session.expire(email, 9000)
+            user = await repo_users.get_user_by_email(email, db)
+            if not user:
+                raise credentials_exception
+            await redis_session.set(email, pickle.dumps(user)) # set user to cache on 9000 seconds
+            await redis_session.expire(email, 9000)
+        else:
+            user = pickle.loads(user)
         return user
 
 
