@@ -13,7 +13,8 @@ from src.services.auth import auth_service
 
 router = APIRouter(prefix='/contacts', tags=['contacts'])
 
-@router.get('/', response_model=List[ContactResponce])
+@router.get('/', response_model=List[ContactResponce],
+            dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def get_contacts(skip: int,
                         limit: int,
                         current_user: User = Depends(auth_service.get_current_user),
@@ -25,14 +26,18 @@ async def get_contacts(skip: int,
     result = await repo_contacts.get_contacts(skip, limit, current_user, db, first_name, last_name, email)
     return result
 
-@router.get('/bithday_on_next_week', response_model=List[ContactResponce])
+
+@router.get('/bithday_on_next_week', response_model=List[ContactResponce],
+            dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def get_contacts_with_birthday_on_next_week(current_user: User = Depends(auth_service.get_current_user),
                                                   db: Session = Depends(get_db)):
 
     result = await repo_contacts.get_contacts_with_bithday_on_next_week(current_user, db)    
     return result
 
-@router.get('/{contact_id}', response_model=ContactResponce)
+
+@router.get('/{contact_id}', response_model=ContactResponce,
+            dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def get_contact(contact_id: int,
                       current_user: User = Depends(auth_service.get_current_user),
                       db: Session = Depends(get_db)):
@@ -42,14 +47,18 @@ async def get_contact(contact_id: int,
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Contact not found')
     return result
 
-@router.post('/', response_model=ContactResponce, status_code=status.HTTP_201_CREATED)
+
+@router.post('/', response_model=ContactResponce, status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def create_contact(body: ContactModel,
                          current_user: User = Depends(auth_service.get_current_user),
                          db: Session = Depends(get_db)):
 
     return await repo_contacts.create_contact(body, current_user, db)
 
-@router.put('/{contact_id}')
+
+@router.put('/{contact_id}',
+            dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def update_contact(contact_id: int,
                          body: ContactModel,
                          current_user: User = Depends(auth_service.get_current_user),
@@ -60,7 +69,9 @@ async def update_contact(contact_id: int,
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Contact not found')
     return result
 
-@router.delete('/{contact_id}')
+
+@router.delete('/{contact_id}',
+               dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def delete_contact(contact_id: int,
                          current_user: User = Depends(auth_service.get_current_user),
                          db: Session = Depends(get_db)):
