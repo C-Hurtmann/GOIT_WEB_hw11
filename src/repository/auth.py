@@ -1,3 +1,4 @@
+from libgravatar import Gravatar
 from sqlalchemy.orm import Session
 
 from src.database.models import User
@@ -8,7 +9,13 @@ async def get_user_by_email(email: str, db: Session) -> User:
     return db.query(User).filter(User.email == email).first()
 
 async def create_user(body: UserModel, db: Session) -> User:
-    new_user = User(**body.dict())
+    try:
+        gravatar = Gravatar(body.email)
+        avatar = gravatar.get_image()
+    except Exception:
+        avatar = None
+
+    new_user = User(**body.dict(), avatar=avatar)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)

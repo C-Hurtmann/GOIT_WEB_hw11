@@ -36,6 +36,7 @@ class UserDB(BaseModel):
     id: int
     email: EmailStr
     password: str
+    avatar: str
     
     class Config:
         orm_mode = True
