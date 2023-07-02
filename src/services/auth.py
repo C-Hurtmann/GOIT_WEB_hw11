@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional
+import pickle
 
 from jose import jwt, JWTError
 from fastapi import Depends, status, HTTPException
@@ -7,7 +8,7 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from src.database.db import get_db
+from src.database.db import get_db, redis_session
 from src.repository import auth as repo_users
 from src.conf.config import settings
 
@@ -72,10 +73,12 @@ class Auth:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Couldn't validate credentials")
     
     async def get_current_user(self, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)): # aka decode_access_token
+
         credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                               detail="Couldn't validate credentials",
                                               headers={'WWW-Authenticate': 'Bearer'})
-        try:
+
+        try: # trying to decode jwt token to get user
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
             if payload['scope'] == 'access_token':
                 email = payload['sub']
@@ -86,9 +89,15 @@ class Auth:
         except JWTError:
             raise credentials_exception
         
+        user = redis_session.get(email) # get user from cache
+        if user:
+            print(user)
+            return pickle.loads(user)
         user = await repo_users.get_user_by_email(email, db)
         if not user:
             raise credentials_exception
+        redis_session.set(email, pickle.dump(user)) # set user to cache on 9000 seconds
+        redis_session.expire(email, 9000)
         return user
 
 

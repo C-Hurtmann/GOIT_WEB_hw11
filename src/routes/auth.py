@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Security, Backgro
 from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
-from src.database.db import get_db
+from src.database.db import get_db, redis_session
 from src.schemas import UserModel, UserResponse, TokenModel, RequestEmail
 from src.repository import auth as repo_auth
 from src.services.auth import auth_service
@@ -29,14 +29,17 @@ async def signup(body: UserModel,
 @router.post('/login', response_model=TokenModel)
 async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = await repo_auth.get_user_by_email(body.username, db)
+    
     if not user: # if user attempt to login with email hadn't signed up
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid email')
     if not user.confirmed:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email hasn't confirmed yet")
     if not auth_service.verify_password(body.password, user.password): # if user put wrong password
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid password') 
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid password')
+ 
     access_token = await auth_service.create_access_token(data={'sub': user.email})
     refresh_token = await auth_service.create_refresh_token(data={'sub': user.email})
+
     await repo_auth.update_token(user, refresh_token, db)
     return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer'}
 

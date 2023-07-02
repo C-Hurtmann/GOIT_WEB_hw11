@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_limiter import FastAPILimiter
 import uvicorn
 
+from src.database.db import redis_session
 from src.routes import contacts
 from src.routes import auth
 from src.routes import users
@@ -30,8 +31,8 @@ app.include_router(users.router, prefix='/api')
 
 @app.on_event('startup')
 async def startup():
-    r = Redis(host=settings.redis_host, port=settings.redis_port, db=0, encoding='utf-8', decode_responses=True)
-    await FastAPILimiter.init(r)
+    await redis_session.ping()
+    await FastAPILimiter.init(redis_session)
 
 @app.get('/')
 def main():
