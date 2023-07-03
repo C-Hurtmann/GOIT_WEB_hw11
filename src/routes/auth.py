@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Security, BackgroundTasks, Request
 from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db, redis_session
+from src.database.models import User
 from src.schemas import UserModel, UserResponse, TokenModel, RequestEmail
 from src.repository import auth as repo_auth
 from src.services.auth import auth_service
-from src.services.email import send_email
+from src.services.email import send_email, send_reset_password_email
 
 
 router = APIRouter(prefix='/auth', tags=['auth'])
@@ -81,3 +83,28 @@ async def request_email(body: RequestEmail,
     if user:
         background_tasks.add_task(send_email, user.email, request.base_url)
     return {'message': 'Check your email for confirmation'}
+
+
+@router.post('/reset_password')
+async def reset_password(body: UserModel,
+                         background_task: BackgroundTasks,
+                         request: Request, db: Session = Depends(get_db)):
+    user = await repo_auth.get_user_by_email(body.email, db)
+    
+    if not user.confirmed:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email hasn't confirmed yet")
+    if not user:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Account with this email already exist')
+    else:
+        background_task.add_task(send_reset_password_email, user.email, body.password, request.base_url)
+        return {'message': 'Check your email'}
+
+@router.get('/reset_password/done/{token}')
+async def reset_password_done(token: str, db: Session = Depends(get_db)):
+    email = await auth_service.get_email_from_token(token)
+    password = await auth_service.get_password_from_token(token)
+    user = await repo_auth.get_user_by_email(email, db)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Verification error')
+    await repo_auth.reset_password(user, password, db)
+    return {'message': 'Password has been reset'}

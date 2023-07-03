@@ -34,6 +34,15 @@ class Auth:
         except JWTError as err:
             print(err)
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail='Invalid verification token')
+    
+    async def get_password_from_token(self, token: str):
+        try:
+            payload = jwt.decode(token, self.SECRET_KEY, self.ALGORITHM)
+            password = payload['pas']
+            return password
+        except JWTError as err:
+            print(err)
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail='Invalid verification token')
 
     async def create_access_token(self, data: dict, expires: Optional[float] = None):
         payload = data.copy()
@@ -60,6 +69,13 @@ class Auth:
         expires_time = datetime.utcnow() + timedelta(days=7)
         payload.update({'iat': datetime.utcnow(), 'exp': expires_time})
         token = jwt.encode(payload, self.SECRET_KEY, algorithm=self.ALGORITHM)
+        return token
+    
+    async def create_reset_password_token(self, data: dict):
+        payload = data.copy()
+        expires_time = datetime.utcnow() + timedelta(hours=1)
+        payload.update({'iat': datetime.utcnow(), 'exp': expires_time})
+        token = jwt.encode(payload, self.SECRET_KEY, self.ALGORITHM)
         return token
     
     async def decode_refresh_token(self, refresh_token: str):

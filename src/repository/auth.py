@@ -30,3 +30,7 @@ async def confirm_email(email: str, db: Session) -> None:
     user.confirmed = True
     db.commit()
     db.refresh(user)
+
+async def reset_password(user: User, password: str, db: Session) -> None:
+    user.password = password
+    db.commit()
