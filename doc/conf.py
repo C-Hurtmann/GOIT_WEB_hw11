@@ -5,7 +5,11 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+import sys
+import os
 
+
+sys.path.append(os.path.abspath('..'))
 project = 'Rest API Contacts'
 copyright = '2023, czagorodnyi'
 author = 'czagorodnyi'
@@ -13,7 +17,7 @@ author = 'czagorodnyi'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+extensions = ['sphinx.ext.autodoc']
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']

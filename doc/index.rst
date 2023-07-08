@@ -10,7 +10,77 @@ Welcome to Rest API Contacts's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+Rest API Contacts main
+======================
 
+.. automodule:: main
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Rest API Contacts repository Auth
+=================================
+
+.. automodule:: src.repository.auth
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Rest API Contacts repository Contacts
+=====================================
+
+.. automodule:: src.repository.contacts
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Rest API Contacts repository Users
+==================================
+
+.. automodule:: src.repository.users
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Rest API Contacts routes Auth
+=============================
+
+.. automodule:: src.routes.auth
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Rest API Contacts routes Contacts
+=================================
+
+.. automodule:: src.routes.contacts
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Rest API Contacts routes Users
+==============================
+
+.. automodule:: src.routes.users
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Rest API Contacts services Auth
+===============================
+
+.. automodule:: src.services.auth
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Rest API Contacts services Email
+================================
+
+.. automodule:: src.services.email
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Indices and tables
 ==================
