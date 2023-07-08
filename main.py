@@ -7,7 +7,7 @@ from src.database.db import redis_session
 from src.routes import contacts
 from src.routes import auth
 from src.routes import users
-from src.conf.config import settings
+
 
 origins = [
     'http://localhost:3000'

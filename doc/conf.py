@@ -7,9 +7,13 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import sys
 import os
-
+from dotenv import load_dotenv
+from pathlib import Path
 
 sys.path.append(os.path.abspath('..'))
+dotenv_path = os.path.join(Path(__file__).resolve().parent.parent, '.env')
+load_dotenv(dotenv_path)
+
 project = 'Rest API Contacts'
 copyright = '2023, czagorodnyi'
 author = 'czagorodnyi'
@@ -27,5 +31,5 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
+html_theme = 'sphinxdoc'
 html_static_path = ['_static']
