@@ -30,11 +30,19 @@ app.include_router(users.router, prefix='/api')
 
 @app.on_event('startup')
 async def startup():
+    """
+    Start with app. Test redis connection. Init Fastapi limiter.
+    """
     await redis_session.ping()
     await FastAPILimiter.init(redis_session)
 
 @app.get('/')
 def main():
+    """
+    Retrieve 'Welcome' message.
+    
+    :return: Message dict.
+    """
     return {'message': 'Welcome'}
 
 
