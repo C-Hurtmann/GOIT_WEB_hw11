@@ -1,4 +1,3 @@
-from copy import copy
 from pathlib import Path
 import sys
 import unittest
@@ -138,7 +137,6 @@ class TestContactsOther(unittest.IsolatedAsyncioTestCase):
         
         self.assertIsNone(query)
     
-
 
 if __name__ == '__main__':
     unittest.main()
