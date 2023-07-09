@@ -15,6 +15,9 @@ class Contact(Base):
     birthday = Column(Date)
     user_id = Column(ForeignKey('users.id', ondelete='CASCADE'), default=None)
     user = relationship('User', backref='contacts')
+    
+    def __repr__(self):
+        return f'{self.first_name}'
 
 
 class User(Base):
