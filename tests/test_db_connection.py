@@ -15,8 +15,7 @@ SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://admin:admin@localhost:5434/post
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestSession = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
-Base.metadata.bind = engine
+if __name__ == '__main__':
+    Base.metadata.bind = engine
 
-Base.metadata.create_all(engine)
-
-print(sys.path)
+    Base.metadata.create_all(engine)
