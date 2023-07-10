@@ -8,7 +8,6 @@ root_dir = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(root_dir))
 
 from src.database.models import User
-from src.schemas import UserModel
 from src.repository import users as repo_users
 from tests.test_db import TestSession
 
