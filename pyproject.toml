@@ -23,6 +23,7 @@ python-dotenv = "^1.0.0"
 libgravatar = "^1.0.4"
 cloudinary = "^1.33.0"
 python-benedict = "^0.31.0"
+httpx = "^0.24.1"
 
 
 

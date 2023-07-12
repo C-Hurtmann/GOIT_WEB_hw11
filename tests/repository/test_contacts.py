@@ -9,7 +9,7 @@ sys.path.insert(0, str(root_dir))
 
 from src.database.models import Contact, User
 from src.repository import contacts as repo_contacts
-from tests.test_db import TestSession
+from tests.conftest import TestSession
 
 
 class TestContactsGet(unittest.IsolatedAsyncioTestCase):

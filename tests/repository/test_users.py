@@ -9,7 +9,6 @@ sys.path.insert(0, str(root_dir))
 
 from src.database.models import User
 from src.repository import users as repo_users
-from tests.test_db import TestSession
 
 
 class TestUsers(unittest.IsolatedAsyncioTestCase):

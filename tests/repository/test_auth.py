@@ -10,7 +10,6 @@ sys.path.insert(0, str(root_dir))
 from src.database.models import User
 from src.schemas import UserModel
 from src.repository import auth as repo_auth
-from tests.test_db import TestSession
 
 
 class TestAuth(unittest.IsolatedAsyncioTestCase):
