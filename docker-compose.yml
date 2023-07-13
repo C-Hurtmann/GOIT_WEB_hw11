@@ -16,6 +16,7 @@ services:
       - 6379:6379
   test-database:
     image: 'postgres:latest'
+    restart: always
     ports:
       - 5434:5432
     environment:
