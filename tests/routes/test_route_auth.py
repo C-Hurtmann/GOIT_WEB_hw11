@@ -15,3 +15,40 @@ def test_create_user(client, user, monkeypatch):
     assert 'id' in data['user']
 
 
+def test_repeat_create_user(client, user):
+    response = client.post('/api/auth/signup/', json=user)
+
+    assert response.status_code == 409, response.text
+    data = response.json()
+    assert data['detail'] == 'Account with this email already exist'
+
+def test_login_user_not_confirmed(client, user):
+    response = client.post('/api/auth/login/', data={'username': user['email'], 'password': user['password']})
+    
+    assert response.status_code == 401, response.text
+    data = response.json()
+    assert data['detail'] == "Email hasn't confirmed yet"
+
+def test_login_user_confirmed(client, session, user):
+    current_user: User = session.query(User).filter(User.email == user.get('email')).first()
+    current_user.confirmed = True
+    session.commit()
+    response = client.post('api/auth/login/', data={'username': user['email'], 'password': user['password']})
+    
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data['token_type'] == 'bearer'
+
+def test_login_wrong_password(client, user):
+    response = client.post('api/auth/login', data={'username': user['email'], 'password': 'wrong_password'})
+    
+    assert response.status_code == 401, response.text
+    data = response.json()
+    assert data['detail'] == 'Invalid password'
+
+def test_login_wrong_email(client, user):
+    response = client.post('api/auth/login', data={'username': 'wrong_email', 'password': user['password']})
+    
+    assert response.status_code == 401, response.text
+    data = response.json()
+    assert data['detail'] == 'Invalid email'
