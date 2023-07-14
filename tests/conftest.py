@@ -49,3 +49,4 @@ def client(session):
 @pytest.fixture(scope='module')
 def user():
     return {'email': 'test@gmail.com', 'password': '123456789'}
+

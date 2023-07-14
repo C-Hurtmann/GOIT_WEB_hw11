@@ -13,8 +13,8 @@ from src.services.auth import auth_service
 
 router = APIRouter(prefix='/contacts', tags=['contacts'])
 
-@router.get('/', response_model=List[ContactResponce],
-            dependencies=[Depends(RateLimiter(times=2, seconds=5))])
+@router.get('/', response_model=List[ContactResponce],)
+            #dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def get_contacts(skip: int,
                         limit: int,
                         current_user: User = Depends(auth_service.get_current_user),
@@ -46,8 +46,8 @@ async def get_contacts(skip: int,
     return result
 
 
-@router.get('/bithday_on_next_week', response_model=List[ContactResponce],
-            dependencies=[Depends(RateLimiter(times=2, seconds=5))])
+@router.get('/bithday_on_next_week', response_model=List[ContactResponce],)
+            #dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def get_contacts_with_birthday_on_next_week(current_user: User = Depends(auth_service.get_current_user),
                                                   db: Session = Depends(get_db)):
     """
@@ -65,8 +65,8 @@ async def get_contacts_with_birthday_on_next_week(current_user: User = Depends(a
     return result
 
 
-@router.get('/{contact_id}', response_model=ContactResponce,
-            dependencies=[Depends(RateLimiter(times=2, seconds=5))])
+@router.get('/{contact_id}', response_model=ContactResponce,)
+            #dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def get_contact(contact_id: int,
                       current_user: User = Depends(auth_service.get_current_user),
                       db: Session = Depends(get_db)):
@@ -91,8 +91,8 @@ async def get_contact(contact_id: int,
     return result
 
 
-@router.post('/', response_model=ContactResponce, status_code=status.HTTP_201_CREATED,
-             dependencies=[Depends(RateLimiter(times=2, seconds=5))])
+@router.post('/', response_model=ContactResponce, status_code=status.HTTP_201_CREATED,)
+             #dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def create_contact(body: ContactModel,
                          current_user: User = Depends(auth_service.get_current_user),
                          db: Session = Depends(get_db)):
@@ -114,8 +114,8 @@ async def create_contact(body: ContactModel,
     return await repo_contacts.create_contact(body, current_user, db)
 
 
-@router.put('/{contact_id}',
-            dependencies=[Depends(RateLimiter(times=2, seconds=5))])
+@router.put('/{contact_id}',)
+            #dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def update_contact(contact_id: int,
                          body: ContactModel,
                          current_user: User = Depends(auth_service.get_current_user),
@@ -143,8 +143,8 @@ async def update_contact(contact_id: int,
     return result
 
 
-@router.delete('/{contact_id}',
-               dependencies=[Depends(RateLimiter(times=2, seconds=5))])
+@router.delete('/{contact_id}',)
+               #dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def delete_contact(contact_id: int,
                          current_user: User = Depends(auth_service.get_current_user),
                          db: Session = Depends(get_db)):

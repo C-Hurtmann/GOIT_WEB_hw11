@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_limiter import FastAPILimiter
@@ -28,13 +30,13 @@ app.include_router(auth.router, prefix='/api')
 app.include_router(contacts.router, prefix='/api')
 app.include_router(users.router, prefix='/api')
 
-@app.on_event('startup')
-async def startup():
-    """
-    Start with app. Test redis connection. Init Fastapi limiter.
-    """
-    await redis_session.ping()
-    await FastAPILimiter.init(redis_session)
+
+#@app.on_event('startup')
+#async def startup():
+  #  """
+  # Start with app. Test redis connection. Init Fastapi limiter.
+  #  """
+ #   await FastAPILimiter.init(redis_session)
 
 @app.get('/')
 def main():

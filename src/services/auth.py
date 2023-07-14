@@ -17,6 +17,7 @@ class Auth:
     SECRET_KEY = settings.secret_key
     ALGORITHM = settings.algorithm
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl='api/auth/login')
+    r = redis_session
     
     def verify_password(self, plain_password: str, hashed_password: str):
         result = self.pwd_context.verify(plain_password, hashed_password)
@@ -105,13 +106,13 @@ class Auth:
         except JWTError:
             raise credentials_exception
         
-        user = await redis_session.get(email) # get user from cache
+        user = await self.r.get(email) # get user from cache
         if not user:
             user = await repo_users.get_user_by_email(email, db)
             if not user:
                 raise credentials_exception
-            await redis_session.set(email, pickle.dumps(user)) # set user to cache on 9000 seconds
-            await redis_session.expire(email, 9000)
+            await self.r.set(email, pickle.dumps(user)) # set user to cache on 9000 seconds
+            await self.r.expire(email, 9000)
         else:
             user = pickle.loads(user)
         return user
