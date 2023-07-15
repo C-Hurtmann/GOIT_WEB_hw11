@@ -23,6 +23,15 @@ config = ConnectionConfig(
 )
 
 async def send_email(email: EmailStr, host: str):
+    """
+    Send verification letter to email.
+    
+    :param email: User email, which letter will be sent.
+    :type email: EmailStr
+    :param host: Host for verification link.
+    :type host: str
+    :rtype: None
+    """
     try:
         verification_token = await auth_service.create_verification_token({'sub': email})
         message = MessageSchema(
@@ -38,6 +47,19 @@ async def send_email(email: EmailStr, host: str):
 
 
 async def send_reset_password_email(email: EmailStr, password: str, host: str):
+    """
+    Send rest password letter. Send jwt with user email and new password hash.
+    
+    If user goes to the link, password will be changed.
+    
+    :param email: User email, which letter will be sent.
+    :type email: EmailStr
+    :param password: New password hash.
+    :type password: str
+    :param host: Host for verification link.
+    :type host: str
+    
+    """
     hashed_password = auth_service.get_password_hash(password)
     reset_password_token = await auth_service.create_reset_password_token({'sub': email, 'pas': hashed_password})
     message = MessageSchema(
